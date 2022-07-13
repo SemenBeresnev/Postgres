@@ -19,7 +19,7 @@ postgres=*# select * from persons;
 ----+------------+-------------
   1 | ivan       | ivanov
   2 | petr       | petrov
-  ```
+```
   
 Посмотрел текущий уровень изоляции
  transaction_isolation
