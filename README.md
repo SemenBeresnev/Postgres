@@ -6,8 +6,19 @@
 При помощи PuTTY подключился к 14-аму Postgres-у два раза. Пришлось использовать ключ -p для выбора порта подключения.
 ![Два подключения](TwoConnects.jpg)
 ## Демонстрация разницы между read committed и repeatable read
+
 Выключил auto commit в обеих сессиях, что бы самостоятельно управлять завершениями транзакций
+postgres=# \set AUTOCOMMIT OFF
+postgres=# \echo :AUTOCOMMIT
+OFF
+
 Сделал в первой сессии таблицу persons и наполнил её данными
+postgres=*# select * from persons;
+ id | first_name | second_name
+----+------------+-------------
+  1 | ivan       | ivanov
+  2 | petr       | petrov
+  
 Посмотрел текущий уровень изоляции
  transaction_isolation
 -----------------------
