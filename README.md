@@ -1,8 +1,9 @@
 # ДЗ урок 3. Докер
 
-Бубу использовать виртуальную машину с утсановленным Ubuntu 20.04 с прошлого урока.
+Буду использовать виртуальную машину с установленным Ubuntu 20.04 с прошлого урока.
 
-Установим на нем Docker Engine перечнем команд
+##Установка Docker Engine.
+Запустим перечнень команд
 ```
 sudo apt update
 ```
@@ -35,13 +36,30 @@ TriggeredBy: ● docker.socket
      CGroup: /system.slice/docker.service
              └─25075 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 ```
+## Развертывание PostgreSQL
+Создадим каталог и убедимся в его наличии
+```
+mkdir /var/lib/postgres
+root@progresssql:/var/lib/postgresql# cd ..
+root@progresssql:/var/lib# ls
+AccountsService  command-not-found  dpkg             landscape  PackageKit  postgresql  systemd                  udisks2              usb_modeswitch
+apport           containerd         fwupd            logrotate  pam         private     tpm                      unattended-upgrades  usbutils
+apt              dbus               git              man-db     plymouth    python      ubuntu-advantage         update-manager       vim
+boltd            dhcp               grub             misc       polkit-1    snapd       ubuntu-release-upgrader  update-notifier
+cloud            docker             initramfs-tools  os-prober  *postgres*    sudo        ucf                      upower
+```
+Развернем контейнер с PostgreSQL
+```
+docker container run -d --name=pg -p 5432:5432 -e POSTGRES_PASSWORD=secret -e PGDATA=/var/lib/postgres -v /var/lib/postgres:/var/lib/postgres postgres:14.4
+```
+Убедимся, что все хорошо
+```
+root@progresssql:/var/lib# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+postgres     14.4      1133a9cdc367   44 hours ago   376MB
+```
 
 
-
-сделать в GCE инстанс с Ubuntu 20.04 или развернуть докер любым удобным способом
-• поставить на нем Docker Engine
-• сделать каталог /var/lib/postgres
-• развернуть контейнер с PostgreSQL 14 смонтировав в него /var/lib/postgres
 • развернуть контейнер с клиентом postgres
 • подключится из контейнера с клиентом к контейнеру с сервером и сделать
 таблицу с парой строк
