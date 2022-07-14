@@ -46,7 +46,7 @@ AccountsService  command-not-found  dpkg             landscape  PackageKit  post
 apport           containerd         fwupd            logrotate  pam         private     tpm                      unattended-upgrades  usbutils
 apt              dbus               git              man-db     plymouth    python      ubuntu-advantage         update-manager       vim
 boltd            dhcp               grub             misc       polkit-1    snapd       ubuntu-release-upgrader  update-notifier
-cloud            docker             initramfs-tools  os-prober  *postgres*    sudo        ucf                      upower
+cloud            docker             initramfs-tools  os-prober  postgres    sudo        ucf                      upower
 ```
 Развернем контейнер с PostgreSQL
 ```
@@ -58,6 +58,27 @@ root@progresssql:/var/lib# docker images
 REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
 postgres     14.4      1133a9cdc367   44 hours ago   376MB
 ```
+А оказалось что не все хорошо. Порт 5432 оказался занят postgres-ом 12 созданным на предыдущем уроке.
+Пришлось удалить контейнер
+```
+root@progresssql:/var/lib# docker stop pg
+pg
+root@progresssql:/var/lib# docker rm pg
+pg
+```
+И создать заново на пору 5434
+```
+docker container run -d --name=pg -p 5434:5434 -e POSTGRES_PASSWORD=secret -e PGDATA=/var/lib/postgres -v /var/lib/postgres:/var/lib/postgres postgres:14.4
+```
+Подключимся к докеру
+```
+root@progresssql:/var/lib# docker exec -it pg psql -U postgres -w postgres
+psql (14.4 (Debian 14.4-1.pgdg110+1))
+Type "help" for help.
+
+postgres=#
+```
+Вот теперь все хорошо.
 
 
 • развернуть контейнер с клиентом postgres
