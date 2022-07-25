@@ -71,9 +71,11 @@ root@postgresql:~# nano /etc/fstab
 root@postgresql:~# chown -R postgres:postgres /mnt/data/
 ```
 ## Перенос данных в премонтированный диск
+Перенес данные при помощи mc
+![Перенос данных](Снимок.jpg)
 
 
-перенесите содержимое /var/lib/postgres/14 в /mnt/data - mv /var/lib/postgresql/14 /mnt/data
+
 попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start
 напишите получилось или нет и почему
 задание: найти конфигурационный параметр в файлах раположенных в /etc/postgresql/10/main который надо поменять и поменяйте его
