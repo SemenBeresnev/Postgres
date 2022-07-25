@@ -72,14 +72,35 @@ root@postgresql:~# chown -R postgres:postgres /mnt/data/
 ```
 ## Перенос данных в премонтированный диск
 Перенес данные при помощи mc
-![Перенос данных](Снимок.jpg)
+![Перенос данных](Снимок.JPG)
+## Запуск кластера с новым расположением данных
+Попытаемся запустить кластер
+```
+root@postgresql:~# sudo -u postgres pg_ctlcluster 14 main start
+Error: /var/lib/postgresql/14/main is not accessible or does not exist
+```
+Запустить не получилось, так как данных на нужном месте нет.
+Отредактировали файл ```root@postgresql:~# nano /etc/postgresql/14/main/postgresql.conf```.
+Заменили значение настройки ```data_directory = '/mnt/data/main'               # use data in another directory```
+Запустили кластер
+```
+root@postgresql:~# pg_ctlcluster 14 main start
+root@postgresql:~# pg_lsclusters
+Ver Cluster Port Status Owner    Data directory Log file
+14  main    5432 online postgres /mnt/data/main /var/log/postgresql/postgresql-14-main.log
+```
+Видно, что он запустился с новыми настройками пути к данным
+Проверим, что данные на месте
+```
+root@postgresql:~# su - postgres
+postgres@postgresql:~$ psql
+psql (14.4 (Ubuntu 14.4-1.pgdg20.04+1))
+Type "help" for help.
 
-
-
-попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start
-напишите получилось или нет и почему
-задание: найти конфигурационный параметр в файлах раположенных в /etc/postgresql/10/main который надо поменять и поменяйте его
-напишите что и почему поменяли
-попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start
-напишите получилось или нет и почему
-зайдите через через psql и проверьте содержимое ранее созданной таблицы
+postgres=# select * from test;
+    c1
+-----------
+ some data
+(1 row)
+```
+Все хорошо, что хорошо кончается.
