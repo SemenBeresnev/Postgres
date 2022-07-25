@@ -66,12 +66,13 @@ root@postgresql:~# nano /etc/fstab
 ```
 Настроили диск для автоматического монтирования при загрузке.
 ![Инфо о диске](Диск.jpg)
+Сменили владельца, что бы postgres мог его использовать
+```
+root@postgresql:~# chown -R postgres:postgres /mnt/data/
+```
+## Перенос данных в премонтированный диск
 
 
-создайте новый standard persistent диск GKE через Compute Engine -> Disks в том же регионе и зоне что GCE инстанс размером например 10GB
-добавьте свеже-созданный диск к виртуальной машине - надо зайти в режим ее редактирования и дальше выбрать пункт attach existing disk
-проинициализируйте диск согласно инструкции и подмонтировать файловую систему, только не забывайте менять имя диска на актуальное, в вашем случае это скорее всего будет /dev/sdb - https://www.digitalocean.com/community/tutorials/how-to-partition-and-format-storage-devices-in-linux
-сделайте пользователя postgres владельцем /mnt/data - chown -R postgres:postgres /mnt/data/
 перенесите содержимое /var/lib/postgres/14 в /mnt/data - mv /var/lib/postgresql/14 /mnt/data
 попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start
 напишите получилось или нет и почему
