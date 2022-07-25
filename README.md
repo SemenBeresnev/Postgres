@@ -39,7 +39,32 @@ root@postgresql:~#
 Почему-то Ubuntu сказала, что лучше останавливать кластер через systemctl, но кластер остановила.
 ## Подключим новый диск
 Диск для виртуальной машины создали и подвязали через Hyper-V.
-```root@postgresql:~# fdisk -l``` - узнали имя раздела созданного диска - ```/dev/sdb```
+
+```root@postgresql:~# fdisk -l``` - узнали имя раздела созданного диска - ```/dev/sdb```.
+```
+root@postgresql:~# mkdir /mnt/data
+root@postgresql:~# mkfs.ext4 -L postgresdata /dev/sdb
+root@postgresql:~# mount -o defaults /dev/sdb /mnt/data
+```
+Создали дирректорию, отформатировали раздел и смонтировали раздел к дирректории
+```
+root@postgresql:~# nano /etc/fstab
+
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/ubuntu-vg/ubuntu-lv during curtin installation
+/dev/disk/by-id/dm-uuid-LVM-Sr2uHOla77LLBEtewcGfWakrQTUmBYpDmBQg5yUULgYRSxCjN55FzK30OZv31IgX / ext4 defaults 0 1
+/dev/sdb /mnt/data ext4 defaults 0 2
+# /boot was on /dev/sda2 during curtin installation
+/dev/disk/by-uuid/96886e89-b6b7-4653-8daa-b45ba17b93b8 /boot ext4 defaults 0 1
+/swap.img       none    swap    sw      0       0
+```
+Настроили диск для автоматического монтирования при загрузке
 
 
 создайте новый standard persistent диск GKE через Compute Engine -> Disks в том же регионе и зоне что GCE инстанс размером например 10GB
