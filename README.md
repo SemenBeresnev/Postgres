@@ -64,7 +64,8 @@ root@postgresql:~# nano /etc/fstab
 /dev/disk/by-uuid/96886e89-b6b7-4653-8daa-b45ba17b93b8 /boot ext4 defaults 0 1
 /swap.img       none    swap    sw      0       0
 ```
-Настроили диск для автоматического монтирования при загрузке
+Настроили диск для автоматического монтирования при загрузке.
+![Инфо о диске](Диск.jpg)
 
 
 создайте новый standard persistent диск GKE через Compute Engine -> Disks в том же регионе и зоне что GCE инстанс размером например 10GB
