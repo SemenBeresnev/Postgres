@@ -28,7 +28,7 @@ vacuuming...
 creating primary keys...
 done in 0.37 s (drop tables 0.01 s, create tables 0.00 s, client-side generate 0.17 s, vacuum 0.10 s, primary keys 0.10 s).
 ```
-запустить pgbench -c8 -P 60 -T 3600 -U postgres postgres
+#запустить pgbench -c8 -P 60 -T 3600 -U postgres postgres
 ```
 postgres@postgresql:~$  pgbench -c8 -P 60 -T 3600 -U postgres postgres
 pgbench (14.4 (Ubuntu 14.4-1.pgdg20.04+1))
@@ -36,9 +36,53 @@ starting vacuum...end.
 progress: 60.0 s, 944.5 tps, lat 8.467 ms stddev 2.130
 progress: 120.0 s, 942.7 tps, lat 8.486 ms stddev 1.840
 ...
-
+progress: 3600.0 s, 914.4 tps, lat 8.749 ms stddev 8.336
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 1
+query mode: simple
+number of clients: 8
+number of threads: 1
+duration: 3600 s
+number of transactions actually processed: 2504741
+latency average = 11.497 ms
+latency stddev = 13.747 ms
+initial connection time = 13.053 ms
+tps = 695.759413 (without initial connection time)
 ```
-дать отработать до конца
-зафиксировать среднее значение tps в последней ⅙ части работы
-а дальше настроить autovacuum максимально эффективно
-так чтобы получить максимально ровное значение tps на горизонте часа
+Заметим, что tpc менялось от 257 до 983. Скажем так неровненько...
+
+#настроить autovacuum максимально эффективно
+Воспользуемся сервисом тюнинга по адресу https://pgtune.leopard.in.ua/. Учтем, что у нас диск SSD, а не HDD.
+Рекомендовано изменить два параметра
+```
+random_page_cost = 1.1
+effective_io_concurrency = 200
+```
+Внесем исправления в conf, перезапустим postgres, пересоздадим таблицы и запустим бенсмарк заново.
+```
+postgres@postgresql:~$  pgbench -c8 -P 60 -T 3600 -U postgres postgres
+pgbench (14.4 (Ubuntu 14.4-1.pgdg20.04+1))
+starting vacuum...end.
+progress: 60.0 s, 918.4 tps, lat 8.707 ms stddev 4.554
+progress: 120.0 s, 970.2 tps, lat 8.245 ms stddev 1.695
+...
+progress: 3540.0 s, 459.9 tps, lat 17.404 ms stddev 9.071
+progress: 3600.0 s, 475.1 tps, lat 16.836 ms stddev 7.785
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 1
+query mode: simple
+number of clients: 8
+number of threads: 1
+duration: 3600 s
+number of transactions actually processed: 2257979
+latency average = 12.754 ms
+latency stddev = 15.367 ms
+initial connection time = 13.809 ms
+tps = 627.213654 (without initial connection time)
+```
+tpc менялось от 222 до 978.
+Все стало еще хуже. Дурацкий сайт https://pgtune.leopard.in.ua/.
+# Включение autovacuum
+
+
+Разремил настройки vacumclean
